@@ -105,9 +105,12 @@
             },
             addNote:function(e){
                 this.slotData = {text:this.textarea};
-                this.$.document.save('/notes/'+this.noteName+'/data').then(null);
-                this.textarea = "";
-                this.slotData = "";
+                console.log(this.slotData);
+                this.$.document.save('/notes/'+this.noteName+'/data').then(function(){
+                    this.textarea = "";
+                    this.$.document.reset();
+                }.bind(this));
+                
             },
             _isNull:function(textarea){
                 this.isTextareaNull = !(textarea!="" && typeof textarea != "undefined")
