@@ -1,0 +1,41 @@
+<link rel="import" href="../../../bower_components/polymer/polymer.html">
+
+<link rel="import" href="../../../bower_components/polymerfire/firebase-document.html">
+
+<link rel="import" href="../../../bower_components/google-map/google-map.html">
+<link rel="import" href="../../../bower_components/google-map/google-map-search.html">
+<link rel="import" href="../../../bower_components/google-map/google-map-marker.html">
+
+<dom-module id="food-map">
+    
+    <template>
+        <style is="custom-style">
+            google-map {
+                height: 200px;
+            }
+        </style>
+
+        <firebase-document
+            id="document_map"
+            app-name="food"
+            path="/map"
+            data="{{marker}}">
+        </firebase-document>
+        <google-map map="{{map}}" latitude="[[marker.latitude]]" longitude="[[marker.longitude]]" api-key="AIzaSyA3leTr49BRI8ElIkOfZlQPa9bz7twTjqo">
+            <google-map-marker latitude="{{marker.latitude}}" longitude="{{marker.longitude}}" draggable="true" title="Go Giants!">
+            </google-map-marker>
+        </google-map>
+
+        <!--<google-map map="{{map}}"></google-map>
+        <google-map-directions map="[[map]]"
+            start-address="Bangkok" end-address="Rayong">
+        </google-map-directions>-->
+
+    </template>
+    <script>
+        Polymer({
+            is:'food-map'
+           
+        });
+    </script>
+</dom-module>

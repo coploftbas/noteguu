@@ -1,0 +1,26 @@
+<link rel="import" href="../../../bower_components/polymer/polymer.html">
+
+<link rel="import" href="food-map.html">
+
+<dom-module id="page-setting">
+    <template>
+        <firebase-document
+            id="document_map"
+            app-name="food"
+            path="/members/"
+            data="{{marker}}">
+        </firebase-document>
+        <food-map></food-map>
+    </template>
+    <script>
+        Polymer({
+            is:'page-setting',
+            observers:['_selectedChanged(selected)'],
+            _selectedChanged:function(val){
+                if(val == this.getAttribute('name')){
+                    this.fire('change-title','Setting');
+                }
+            }
+        });
+    </script>
+</dom-module>

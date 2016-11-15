@@ -1,0 +1,16 @@
+<link rel="import" href="../../../bower_components/polymer/polymer.html">
+
+
+<dom-module id="page-signin">
+    <template>
+        <button on-tap="signin">signin</button>
+    </template>
+    <script>
+        Polymer({
+            is:'page-signin',
+            signin:function(){
+                this.fire('signin');
+            }
+        });
+    </script>
+</dom-module>

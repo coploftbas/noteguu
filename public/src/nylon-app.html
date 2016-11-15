@@ -1,0 +1,67 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/app-route/app-location.html">
+<link rel="import" href="../bower_components/app-route/app-route.html">
+
+<link rel="import" href="nylon-init.html">
+
+<dom-module id="nylon-app">
+    <template>
+        <app-location route="{{route}}"></app-location>
+        <app-route
+            route="{{route}}"
+            pattern="/:note"
+            data="{{routeData}}"
+            tail="{{subroute}}"></app-route>
+        <a id="linkSystem" href="#" style="display:none;"></a>
+        <nylon-init on-auth="_auth" on-change-path="_changePath" on-link-page="_onLinkPage" status="{{status}}" note-name="[[note]]"></nylon-init>
+        
+    </template>
+    <script>
+        Polymer({
+            is:'nylon-app',
+            properties:{
+                note: {
+                    type: String,
+                    reflectToAttribute: true,
+                },
+                status:{
+                    type:String
+                }
+            },
+            observers: [
+                '_routePageChanged(routeData.note)'
+            ],
+            _routePageChanged: function(note) {
+                this.note = note || 'xx';
+                console.log(note)
+            },
+            _onLinkPage:function(e){
+                this._pageChanged(e.detail);
+            },
+            _pageChanged: function(detail) {
+
+                this.status = "loading";
+
+                this.importHref(
+                    this.resolveUrl('/src/'+detail.link),
+                    ()=>{
+                        this.status = "loaded";
+                    },
+                    ()=>{
+                        this.status = "error";
+                    }, true
+                );
+                
+            },
+            _changePath:function(e){
+                this.$.linkSystem.setAttribute('href',e.detail.path);
+                this.$.linkSystem.click();
+            },
+            _auth:function(e){
+                this.user = e.detail
+                console.log(this.user);
+            }
+            
+        });
+    </script>
+</dom-module>

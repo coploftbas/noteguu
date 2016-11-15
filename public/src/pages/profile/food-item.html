@@ -1,0 +1,93 @@
+<link rel="import" href="../../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../../bower_components/iron-flex-layout/iron-flex-layout.html">
+
+<link rel="import" href="../../../bower_components/polymer/polymer.html">
+
+<link rel="import" href="../../../bower_components/paper-material/paper-material.html">
+<link rel="import" href="../../../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../../../bower_components/paper-icon-button/paper-icon-button.html">
+
+<link rel="import" href="../../../bower_components/neon-animation/neon-animation-runner-behavior.html">
+<link rel="import" href="../../../bower_components/neon-animation/animations/slide-from-bottom-animation.html">
+<link rel="import" href="../../../bower_components/neon-animation/animations/slide-left-animation.html">
+
+<link rel="import" href="input-food-img.html">
+
+<dom-module id="food-item">
+    
+    <template>
+        <style is="custom-style">
+            :host{
+                /* Element must be inline-block for Animations */
+                display:inline-block;
+                margin-top:1px;
+                width:100%;
+                
+                background-color:#FFF;
+            }
+            .list{
+                padding:15px;
+            }
+            .flex-equal-justified {
+                @apply(--layout-horizontal);
+                @apply(--layout-justified);
+            }
+        </style>
+        <div class="list">
+            <input-food-img img-name="[[item.img]]"></input-food-img>
+            <div class="flex-equal-justified">
+                <div>[[item.name]]</div>
+                <paper-icon-button icon="delete" on-tap="deleteFood" title="delete"></paper-icon-button>
+            </div>
+            
+            <template is="dom-repeat" items="{{item.list}}">
+                <div>- {{item.name}}</div>
+            </template>
+        </div>
+        
+        
+    </template>
+    <script>
+        Polymer({
+            is:'food-item',
+            behaviors: [
+              Polymer.NeonAnimationRunnerBehavior
+            ],
+            properties:{
+              animationConfig:{
+                  type:Object,
+                  value:function(){
+                      return {
+                        'comeIn':{
+                            name: 'slide-from-bottom-animation',
+                            node: this,
+                            timing:{ delay:100 }
+                        },
+                        'comOut':{
+                            name: 'slide-left-animation',
+                            node: this,
+                            timing:{ delay:100 }
+                        }
+                      }
+                  }
+              }
+            },
+            listeners:{'neon-animation-finish':'_onAnimationFinish'},
+            _onAnimationFinish:function(){
+                if(!this.opened){
+                    this.style.display = 'none';
+                    this.fire('delete-food',this.item);
+                }
+            },
+            ready:function(){
+                this.opened = true;
+                this.playAnimation('comeIn');
+                //console.log(this.guid());
+            },
+            deleteFood:function(){
+                this.opened = false;
+                this.playAnimation('comOut');
+            }
+        });
+    </script>
+</dom-module>

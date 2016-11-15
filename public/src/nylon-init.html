@@ -1,0 +1,121 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+
+<link rel="import" href="../bower_components/polymerfire/firebase-app.html">
+<link rel="import" href="../bower_components/polymerfire/firebase-document.html">
+<link rel="import" href="../bower_components/polymerfire/firebase-query.html">
+
+<link rel="import" href="../bower_components/paper-input/paper-textarea.html">
+<link rel="import" href="../bower_components/paper-material/paper-material.html">
+<link rel="import" href="../bower_components/paper-button/paper-button.html">
+
+<dom-module id="nylon-init">
+    <template>
+        <style>
+            paper-textarea {
+                margin:auto;
+            }
+
+            paper-material{
+                margin:auto;
+                background-color: #FFF;
+                padding: 10px;
+            }
+
+            paper-button{
+                background-color: var(--paper-green-500);
+                color: white;
+                height: 30px;
+                float: right;
+            }
+
+            .container{
+                
+                margin:auto;
+                width:50%;
+            }
+
+            .repeat{
+                margin-top:50px;
+            }
+
+            /*@media screen and (max-width: 699px) and (min-width: 520px) {
+                .container{
+                    width:50%;
+                }
+            }*/
+
+            @media  (max-width: 1200px) {
+                .container{
+                    width:70%;
+                }
+            }
+
+            @media  (max-width: 600px) {
+                .container{
+                    width:90%;
+                }
+            }
+
+        </style>
+
+        <firebase-app 
+            name="noteguu" 
+            api-key="AIzaSyA7EbzPZ05OQdmVE1RDugffQzrymjt_WdE"
+            auth-domain="noteguu-61501.firebaseapp.com"
+            database-url="https://noteguu-61501.firebaseio.com"
+            storage-bucket="noteguu-61501.appspot.com">
+        </firebase-app>
+        <firebase-document 
+            id="document" 
+            app-name="noteguu" 
+            path="{{pathData}}" 
+            data="{{slotData}}">
+        </firebase-document>
+        <firebase-query
+            app-name="noteguu"
+            path="{{_getData(noteName)}}"
+            data="{{dataNote}}"
+        >
+        </firebase-query>
+
+        <div class="container">
+            <paper-textarea label="Note" value="{{textarea}}"></paper-textarea>
+            <paper-button raised on-tap="addNote" disabled$="[[isTextareaNull]]">ADD</paper-button>
+            <div class="repeat">
+                <template is="dom-repeat" items="[[dataNote]]">
+                    <paper-material>[[item.text]]</paper-material>
+                    <br>
+                </template>
+            </div>
+        </div>
+
+        
+    </template>
+
+
+    <script>
+        Polymer({
+            is:'nylon-init',
+            observers:['_isNull(textarea)'],
+            ready:function(){
+                this.isTextareaNull = true;
+            },
+            _getData:function(noteName){
+                return '/notes/'+noteName+'/data'
+            },
+            addNote:function(e){
+                this.slotData = {text:this.textarea};
+                this.$.document.save('/notes/'+this.noteName+'/data').then(null);
+                this.textarea = "";
+                this.slotData = "";
+            },
+            _isNull:function(textarea){
+                this.isTextareaNull = !(textarea!="" && typeof textarea != "undefined")
+            },
+            _reverseArr:function(arr){
+                console.log(arr.reverse());
+                return arr.reverse();
+            }
+        });
+    </script>
+</dom-module>
