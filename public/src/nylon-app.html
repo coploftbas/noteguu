@@ -32,8 +32,7 @@
                 '_routePageChanged(routeData.note)'
             ],
             _routePageChanged: function(note) {
-                this.note = note || 'xx';
-                console.log(note)
+                this.note = note || 'all';
             },
             _onLinkPage:function(e){
                 this._pageChanged(e.detail);
