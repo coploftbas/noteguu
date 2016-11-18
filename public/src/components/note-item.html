@@ -1,0 +1,31 @@
+<link rel="import" href="../../bower_components/paper-material/paper-material.html">
+
+<dom-module id="note-item">
+    <template>
+        <style>
+            paper-material{
+                margin:auto;
+                background-color: #FFF;
+                padding: 10px;
+                margin-top: 10px;
+                word-wrap: break-word;
+            }
+        </style>
+        <paper-material>
+            <template is="dom-repeat" items="[[arrText]]">
+                [[item]]<br>
+            </template>
+        </paper-material>
+    </template>
+
+
+    <script>
+        Polymer({
+            is:'note-item',
+            observers:['_obItemText(item.text)'],
+            _obItemText:function(text){
+                this.arrText = text.split("\n");
+            }
+        });
+    </script>
+</dom-module>

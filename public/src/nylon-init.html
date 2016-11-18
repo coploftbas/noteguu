@@ -5,22 +5,18 @@
 <link rel="import" href="../bower_components/polymerfire/firebase-query.html">
 
 <link rel="import" href="../bower_components/paper-input/paper-textarea.html">
-<link rel="import" href="../bower_components/paper-material/paper-material.html">
 <link rel="import" href="../bower_components/paper-button/paper-button.html">
 
+<link rel="import" href="../bower_components/iron-list/iron-list.html">
 <link rel="import" href="../bower_components/iron-scroll-threshold/iron-scroll-threshold.html">
+
+<link rel="import" href="components/note-item.html">
 
 <dom-module id="nylon-init">
     <template>
         <style>
             paper-textarea {
                 margin:auto;
-            }
-
-            paper-material{
-                margin:auto;
-                background-color: #FFF;
-                padding: 10px;
             }
 
             paper-button{
@@ -39,12 +35,6 @@
             .repeat{
                 margin-top:50px;
             }
-
-            /*@media screen and (max-width: 699px) and (min-width: 520px) {
-                .container{
-                    width:50%;
-                }
-            }*/
 
             @media  (max-width: 1200px) {
                 .container{
@@ -77,26 +67,31 @@
             app-name="noteguu"
             path="{{_getData(noteName)}}"
             data="{{dataNote}}"
-            limit-to-frist="0"
-            limit-to-last="0"
+            order-by-child="timestamp"
         >
         </firebase-query>
 
+        <div style="position:fixed">[[lowerTriggered]]</div>
         <div class="container">
             <paper-textarea label="Note" value="{{textarea}}"></paper-textarea>
             <paper-button raised on-tap="addNote" disabled$="[[isTextareaNull]]">ADD</paper-button>
             <div class="repeat">
-                <template is="dom-repeat" items="[[dataNote]]">
-                    <paper-material>[[item.text]]</paper-material>
-                    <br>
-                </template>
+                <iron-list items="[[dataNote]]" as="item">
+                    <template>
+                        <div>
+                            <note-item item="[[item]]"></note-item>
+                        </div>
+                    </template>
+                </iron-list>
+                
             </div>
         </div>
-
+        
         <iron-scroll-threshold 
             id="scrollTheshold"
             lower-threshold="500"
             on-lower-threshold="_loadMoreData"
+            lower-triggered="{{lowerTriggered}}"
             scroll-target="html">
         </iron-scroll-threshold>
 
@@ -115,7 +110,11 @@
                 return '/notes/'+noteName+'/data'
             },
             addNote:function(e){
-                this.slotData = {text:this.textarea};
+                //console.log(firebase.database.ServerValue.TIMESTAMP);
+                var d = new Date();
+                var n = d.getTime();
+
+                this.slotData = {text:this.textarea,timestamp:-Math.abs(n)};
                 this.$.document.save('/notes/'+this.noteName+'/data').then(function(){
                     this.textarea = "";
                     this.$.document.reset();
