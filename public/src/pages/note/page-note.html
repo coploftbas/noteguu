@@ -2,7 +2,7 @@
 <link rel="import" href="../../../bower_components/paper-button/paper-button.html">
 <link rel="import" href="../../../bower_components/paper-fab/paper-fab.html">
 <link rel="import" href="../../../bower_components/iron-icons/iron-icons.html">
-<link rel="import" href="../../../bower_components/iron-icons/notification-icons.html">
+<link rel="import" href="../../../bower_components/iron-icons/social-icons.html">
 
 <link rel="import" href="../../../bower_components/iron-list/iron-list.html">
 <link rel="import" href="../../../bower_components/iron-scroll-threshold/iron-scroll-threshold.html">
@@ -44,17 +44,21 @@
                 }
             }
 
-            paper-fab {
-                
+            #fabNotification {
                 position: fixed;
-                --paper-fab-background: var(--paper-light-green-a700);
+                background-color: var(--paper-grey-500);
                 left:20px;
                 bottom:20px;
                 z-index: 1;
             }
 
+            #fabNotification[on]{
+                background-color: var(--paper-green-500);
+            }
+
         </style>
-        <paper-fab icon="notification:sms" on-tap="registerNotification"></paper-fab>
+
+        <paper-fab id="fabNotification" on$="{{hasTokenBoolean}}" icon="social:notifications-off" on-tap="registerNotification"></paper-fab>
 
         <firebase-messaging
             id="messaging"
@@ -68,6 +72,12 @@
             path="{{_getPathData(noteName,'token')}}"
         >
         </firebase-query>
+        <firebase-document
+            id="hasToken"
+            app-name="noteguu"
+            path="/notes/[[noteName]]/tokenMsg/[[tokenHead(tokenMsg)]]"
+            data="{{hasToken}}">
+        </firebase-document>
 
 
         <firebase-document 
@@ -113,7 +123,7 @@
     <script>
         Polymer({
             is:'page-note',
-            observers:['_isNull(textarea)','_obTokenMsg(tokenMsg)'],
+            observers:['_isNull(textarea)','_obTokenMsg(tokenMsg)','_obHasToken(hasToken)'],
             ready:function(){
                 this.isTextareaNull = true;
             },
@@ -171,12 +181,18 @@
                 console.log('ss');
             },
             registerNotification:function(){
-                this.$.messaging.requestPermission().then(()=>{
-                    this.registerMsg = true;
-                    this._obTokenMsg(this.tokenMsg);
-                }, function(err) {
-                    console.log(err);
-                });
+                if(!this.hasTokenBoolean){
+                    this.$.messaging.requestPermission().then(()=>{
+                        this.registerMsg = true;
+                        this._obTokenMsg(this.tokenMsg);
+                    }, function(err) {
+                        console.log(err);
+                    });
+                }else{
+                    this.$.hasToken.path = `/notes/${this.noteName}/tokenMsg/${this.tokenHead(this.tokenMsg)}`;
+                    this.$.hasToken.destroy();
+                }
+                
             },
             handleMessage:function(e,detail){
                 console.log(detail.message);
@@ -191,6 +207,21 @@
                     registerMsg = false;
                 }
                 
+            },
+            tokenHead:function(token){
+                if(token != null){
+                    return token.split(':')[0];
+                }
+                
+            },
+            _obHasToken:function(hasToken){
+                if(typeof hasToken == "object"){
+                    this.$.fabNotification.icon = 'social:notifications-off';
+                    this.hasTokenBoolean = false;
+                }else{
+                    this.$.fabNotification.icon = 'social:notifications';
+                    this.hasTokenBoolean = true;
+                }
             }
         });
     </script>
