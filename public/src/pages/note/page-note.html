@@ -1,5 +1,8 @@
 <link rel="import" href="../../../bower_components/paper-input/paper-textarea.html">
 <link rel="import" href="../../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../../../bower_components/paper-fab/paper-fab.html">
+<link rel="import" href="../../../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../../../bower_components/iron-icons/notification-icons.html">
 
 <link rel="import" href="../../../bower_components/iron-list/iron-list.html">
 <link rel="import" href="../../../bower_components/iron-scroll-threshold/iron-scroll-threshold.html">
@@ -41,17 +44,40 @@
                 }
             }
 
+            paper-fab {
+                
+                position: fixed;
+                --paper-fab-background: var(--paper-light-green-a700);
+                left:20px;
+                bottom:20px;
+                z-index: 1;
+            }
+
         </style>
+        <paper-fab icon="notification:sms" on-tap="registerNotification"></paper-fab>
+
+        <firebase-messaging
+            id="messaging"
+            app-name="noteguu"
+            token="{{tokenMsg}}"
+            on-message="handleMessage">
+        </firebase-messaging>
+        <firebase-query
+            id="queryToken"
+            app-name="noteguu"
+            path="{{_getPathData(noteName,'token')}}"
+        >
+        </firebase-query>
+
 
         <firebase-document 
             id="document" 
-            app-name="noteguu" 
-            path="{{pathData}}" 
-            data="{{slotData}}">
+            app-name="noteguu">
         </firebase-document>
+
         <firebase-query
             app-name="noteguu"
-            path="{{_getData(noteName)}}"
+            path="{{_getPathData(noteName,'data')}}"
             data="{{dataNote}}"
             order-by-child="timestamp"
         >
@@ -87,23 +113,49 @@
     <script>
         Polymer({
             is:'page-note',
-            observers:['_isNull(textarea)'],
+            observers:['_isNull(textarea)','_obTokenMsg(tokenMsg)'],
             ready:function(){
                 this.isTextareaNull = true;
             },
-            _getData:function(noteName){
-                console.log(noteName);
-                return '/notes/'+noteName+'/data'
+            _getPathData:function(noteName,dataType){
+                if(dataType=="data"){
+                    return '/notes/'+noteName+'/data'
+                }else{
+                    return '/notes/'+noteName+'/tokenMsg'
+                }
+                
             },
             addNote:function(e){
                 //console.log(firebase.database.ServerValue.TIMESTAMP);
                 var d = new Date();
                 var n = d.getTime();
 
-                this.slotData = {text:this.textarea,timestamp:-Math.abs(n)};
+                this.$.document.data = {text:this.textarea,timestamp:-Math.abs(n)};
                 this.$.document.save('/notes/'+this.noteName+'/data').then(function(){
-                    this.textarea = "";
+                    
+                    
                     this.$.document.reset();
+
+                    this.$.queryToken.data.map((item)=>{
+                        fetch('https://fcm.googleapis.com/fcm/send', {
+                            method: 'POST', 
+                            headers: new Headers({
+                                'Content-Type':'application/json',
+                                'Authorization':'key=AIzaSyA8D3wt4SaBin70-lAA4zV0MOEnqIIeQFA'
+                            }),
+                            body: JSON.stringify({
+                                to: item.$val,
+                                notification:{
+                                    title:"Note Guu : " + this.noteName,
+                                    body:this.textarea,
+                                    click_action:'https://noteguu.com/'+this.noteName
+                                }
+                            })
+                        }).then(function() { console.log('ok') });
+                    });
+
+                    this.textarea = "";
+
                 }.bind(this));
                 
             },
@@ -117,6 +169,28 @@
             _loadMoreData:function() {
                 this.$.scrollTheshold.clearTriggers();
                 console.log('ss');
+            },
+            registerNotification:function(){
+                this.$.messaging.requestPermission().then(()=>{
+                    this.registerMsg = true;
+                    this._obTokenMsg(this.tokenMsg);
+                }, function(err) {
+                    console.log(err);
+                });
+            },
+            handleMessage:function(e,detail){
+                console.log(detail.message);
+            },
+            _obTokenMsg:function(token){
+                if(token != null && this.registerMsg == true){
+                    var arrToken = token.split(':');
+                    this.$.document.data = arrToken[0]+':'+arrToken[1];
+                    this.$.document.save('/notes/'+this.noteName+'/tokenMsg/',arrToken[0]).then(function(){
+                        this.$.document.reset();
+                    }.bind(this));
+                    registerMsg = false;
+                }
+                
             }
         });
     </script>
