@@ -8,31 +8,45 @@
     <template>
         <app-location route="{{route}}"></app-location>
         <app-route
-            route="{{route}}"
-            pattern="/:note"
+            id="test"
+            route="[[route]]"
+            pattern="/:parem1/:parem2"
+            data="{{routeData2}}"
+        ></app-route>
+        <app-route
+            route="[[route]]"
+            pattern="/:parem1"
             data="{{routeData}}"
-            tail="{{subroute}}"></app-route>
+        ></app-route>
+        
         <a id="linkSystem" href="#" style="display:none;"></a>
-        <nylon-init on-auth="_auth" on-change-path="_changePath" on-link-page="_onLinkPage" status="{{status}}" note-name="[[note]]"></nylon-init>
+        <nylon-init on-auth="_auth" on-change-path="_changePath" on-link-page="_onLinkPage" status="{{status}}" parems="[[parems]]"></nylon-init>
         
     </template>
     <script>
         Polymer({
             is:'nylon-app',
             properties:{
-                note: {
-                    type: String,
-                    reflectToAttribute: true,
-                },
                 status:{
                     type:String
                 }
             },
             observers: [
-                '_routePageChanged(routeData.note)'
+                '_routePageChanged(routeData)'
             ],
-            _routePageChanged: function(note) {
-                this.note = note || 'all';
+            _routePageChanged: function(parems) {
+                parems.parem1 = parems.parem1 || 'index';
+                if(parems.parem1=='app'){
+                    if(typeof this.routeData2 == "undefined"){
+                        this.parems = parems;
+                    }else{
+                        this.parems = this.routeData2;
+                    }
+                }else if(parems.parem1!='index'){
+                    this.parems = {parem1:'note',parem2:parems.parem1};
+                }else{
+                    this.parems = parems;
+                }
             },
             _onLinkPage:function(e){
                 this._pageChanged(e.detail);
