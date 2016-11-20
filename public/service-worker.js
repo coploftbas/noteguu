@@ -1,6 +1,5 @@
 // Set a name for the current cache
 var CACHE_NAME = 'NOTE-GUU-V1';
-
 // Default files to always cache
 var urlsToCache = [
     '/bower_components/polymer/polymer.html',
@@ -15,7 +14,8 @@ var urlsToCache = [
 
     '/bower_components/paper-input/paper-input',
     '/bower_components/paper-input/paper-textarea.html',
-    '/bower_components/paper-button/paper-button.html'
+    '/bower_components/paper-button/paper-button.html',
+    '/src/pages/index/page-index.html'
 ];
 
 
@@ -38,7 +38,7 @@ self.addEventListener('fetch', function (event) {
         .then(function (response) {
             // Cache hit - return response
             if (response) {
-                console.log('[ServiceWorker] Found in Cache : ',response.url)
+                //console.log('%c[ServiceWorker] Found in Cache : '+response.url,'color:green')
                 return response;
             }
 
@@ -48,9 +48,26 @@ self.addEventListener('fetch', function (event) {
             // once by cache and once by the browser for fetch, we need
             // to clone the response.
             var fetchRequest = event.request.clone();
-            console.log('[ServiceWorker] Cache Not Found :',fetchRequest.url);
+            //console.log('[ServiceWorker] Cache Not Found :',fetchRequest.url);
             return fetch(fetchRequest)
         })
 
+    );
+});
+
+self.addEventListener('activate', function(event) {
+    console.log('[ServiceWorker] Activated');
+    var cacheWhitelist = ['NOTE-GUU-V1'];
+
+    event.waitUntil(
+        caches.keys().then(function(cacheNames) {
+        return Promise.all(
+            cacheNames.map(function(cacheName) {
+                if (cacheWhitelist.indexOf(cacheName) === -1) {
+                    return caches.delete(cacheName);
+                }
+            })
+        );
+        })
     );
 });
