@@ -56,6 +56,12 @@
                 background-color: var(--paper-green-500);
             }
 
+            .loadingContent{
+                padding: 10px;
+                background-color: #CFCFCF;
+                color:#999;
+            }
+
         </style>
 
         <paper-fab id="fabNotification" on$="{{hasTokenBoolean}}" icon="social:notifications-off" on-tap="registerNotification"></paper-fab>
@@ -90,15 +96,16 @@
             path="{{_getPathData(noteName,'data')}}"
             data="{{dataNote}}"
             order-by-child="timestamp"
+            zero-value="{{xx}}"
         >
         </firebase-query>
-
         <!--<div style="position:fixed">[[lowerTriggered]]</div>-->
 
         <div class="container">
             <paper-textarea label="Note" value="{{textarea}}"></paper-textarea>
             <paper-button raised on-tap="addNote" disabled$="[[isTextareaNull]]">ADD</paper-button>
             <div class="repeat">
+                <div class="loadingContent" hidden$="[[!loadNote]]">Loading Content.</div>
                 <iron-list items="[[dataNote]]" as="item">
                     <template>
                         <div>
@@ -123,9 +130,10 @@
     <script>
         Polymer({
             is:'page-note',
-            observers:['_isNull(textarea)','_obTokenMsg(tokenMsg)','_obHasToken(hasToken)'],
+            observers:['_isNull(textarea)','_obTokenMsg(tokenMsg)','_obHasToken(hasToken)','_obDataNote(dataNote.*)'],
             ready:function(){
                 this.isTextareaNull = true;
+                this.loadNote = true;
             },
             _getPathData:function(noteName,dataType){
                 if(dataType=="data"){
@@ -221,6 +229,15 @@
                 }else{
                     this.$.fabNotification.icon = 'social:notifications';
                     this.hasTokenBoolean = true;
+                }
+            },
+            _obDataNote:function(dataNote){
+                if(dataNote.base.length==0){
+                    this.async(()=>{
+                        this.loadNote = false;
+                    },3000)
+                }else{
+                    this.loadNote = false;
                 }
             }
         });

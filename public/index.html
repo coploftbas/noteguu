@@ -24,13 +24,57 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         margin: 0;
         background-color:#E6E6E6;
       }
+
+      .flex-loader{
+        display: -webkit-flex;
+        display: flex;
+        position: fixed;
+        width:100%;
+        height:100%;
+        top:0;
+        right:0;
+      }
+
+      .flex-loader-item{
+        margin: auto;
+      }
+
+      .loader {
+        border: 5px solid #FFF;
+        border-radius: 50%;
+        border-top: 5px solid #3498db;
+        width: 25px;
+        height: 25px;
+        -webkit-animation: spin 2s linear infinite;
+        animation: spin 2s linear infinite;
+        margin: auto;
+      }
+
+      @-webkit-keyframes spin {
+        0% { -webkit-transform: rotate(0deg); }
+        100% { -webkit-transform: rotate(360deg); }
+      }
+
+      @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+      }
   </style>
 
 </head>
 <body>
-
+  
   <!--food-app unresolved>Loading...</food-app-->
-  <nylon-app></nylon-app>
+  <nylon-app>
+    <div class="flex-loader">
+      
+      <div class="flex-loader-item">
+        <div class="loader"></div>
+        <div style="margin-top:10px;">Loading...</div>
+      </div>
+
+    </div>
+  </nylon-app>
 
   <script>
     window.performance && performance.mark && performance.mark('index.html');
