@@ -3,6 +3,8 @@
 <link rel="import" href="../../../bower_components/paper-fab/paper-fab.html">
 <link rel="import" href="../../../bower_components/iron-icons/iron-icons.html">
 <link rel="import" href="../../../bower_components/iron-icons/social-icons.html">
+<link rel="import" href="../../../bower_components/paper-icon-button/paper-icon-button.html">
+
 
 <link rel="import" href="../../../bower_components/iron-list/iron-list.html">
 <link rel="import" href="../../../bower_components/iron-scroll-threshold/iron-scroll-threshold.html">
@@ -18,7 +20,6 @@
             paper-button{
                 background-color: var(--paper-green-500);
                 color: white;
-                height: 30px;
                 float: right;
             }
 
@@ -61,7 +62,11 @@
                 background-color: #CFCFCF;
                 color:#999;
             }
-
+            paper-icon-button[icon=clear]{
+                float: right;
+                margin-top: 15px;
+                color:#AAA;
+            }
         </style>
 
         <paper-fab id="fabNotification" on$="{{hasTokenBoolean}}" icon="social:notifications-off" on-tap="registerNotification"></paper-fab>
@@ -102,7 +107,8 @@
         <!--<div style="position:fixed">[[lowerTriggered]]</div>-->
 
         <div class="container">
-            <paper-textarea label="Note" value="{{textarea}}"></paper-textarea>
+            <paper-icon-button icon="clear" on-tap="clearValue"></paper-icon-button>
+            <paper-textarea label="Note" on-keyup="_keyup" value="{{textarea}}"></paper-textarea>
             <paper-button raised on-tap="addNote" disabled$="[[isTextareaNull]]">ADD</paper-button>
             <div class="repeat">
                 <div class="loadingContent" hidden$="[[!loadNote]]">Loading Content.</div>
@@ -148,7 +154,8 @@
                 var d = new Date();
                 var n = d.getTime();
 
-                this.$.document.data = {text:this.textarea,timestamp:-Math.abs(n)};
+                this.$.document.data = {text:this.textarea.trim(),timestamp:-Math.abs(n)};
+                
                 this.$.document.save('/notes/'+this.noteName+'/data').then(function(){
                     
                     
@@ -171,8 +178,8 @@
                             })
                         }).then(function() { console.log('ok') });
                     });
-
                     this.textarea = "";
+                    
 
                 }.bind(this));
                 
@@ -239,6 +246,14 @@
                 }else{
                     this.loadNote = false;
                 }
+            },
+            _keyup:function(e){
+                if(e.keyCode==13 && e.shiftKey == false){
+                    this.addNote();
+                }
+            },
+            clearValue:function(e){
+                this.textarea = "";
             }
         });
     </script>
