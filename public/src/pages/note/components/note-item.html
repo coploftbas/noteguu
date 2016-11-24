@@ -1,22 +1,33 @@
-<link rel="import" href="../../../../bower_components/paper-material/paper-material.html">
-
 <dom-module id="note-item">
     <template>
         <style>
-            paper-material{
-                margin:auto;
-                background-color: #FFF;
-                padding: 10px;
-                margin-top: 10px;
-                word-wrap: break-word;
+            :root{
+                width: 100%;
+                margin-top: 20px;
             }
+
             pre{
                 font-family: CSChatThaiUI;
+                margin: 0;
+            }
+            
+            .card{
+                box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+                transition: 0.3s;
+                border-radius: 5px;
+
+                background-color: #FFF;
+                word-wrap: break-word;
+            }
+            .padding{
+                padding:20px;
             }
         </style>
-        <paper-material>
-            <pre>[[item.text]]</pre>
-        </paper-material>
+        <div class="card">  
+            <div class="padding">
+                <pre>[[item.text]]</pre>
+            </div>
+        </div>
     </template>
 
 
