@@ -10,22 +10,19 @@
                 margin-top: 10px;
                 word-wrap: break-word;
             }
+            pre{
+                font-family: CSChatThaiUI;
+            }
         </style>
         <paper-material>
-            <template is="dom-repeat" items="[[arrText]]">
-                [[item]]<br>
-            </template>
+            <pre>[[item.text]]</pre>
         </paper-material>
     </template>
 
 
     <script>
         Polymer({
-            is:'note-item',
-            observers:['_obItemText(item.text)'],
-            _obItemText:function(text){
-                this.arrText = text.split("\n");
-            }
+            is:'note-item'
         });
     </script>
 </dom-module>
