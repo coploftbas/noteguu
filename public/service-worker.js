@@ -1,5 +1,5 @@
 // Set a name for the current cache
-var CACHE_NAME = 'NOTE-GUU-V1';
+var CACHE_NAME = 'NOTE-GUU-V9';
 // Default files to always cache
 var urlsToCache = [
     '/bower_components/polymer/polymer.html',
@@ -60,7 +60,7 @@ self.addEventListener('fetch', function (event) {
 
 self.addEventListener('activate', function(event) {
     console.log('[ServiceWorker] Activated');
-    var cacheWhitelist = ['NOTE-GUU-V1'];
+    var cacheWhitelist = ['NOTE-GUU-V9'];
 
     event.waitUntil(
         caches.keys().then(function(cacheNames) {
