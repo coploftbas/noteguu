@@ -57,6 +57,18 @@
                 background-color: var(--paper-green-500);
             }
 
+            #fabSetting {
+                position: fixed;
+                background-color: var(--paper-grey-500);
+                right:20px;
+                bottom:20px;
+                z-index: 1;
+            }
+
+            #fabSetting[on]{
+                background-color: var(--paper-blue-900);
+            }
+
             .loadingContent{
                 padding: 10px;
                 background-color: #CFCFCF;
@@ -71,6 +83,7 @@
         </style>
 
         <paper-fab id="fabNotification" on$="{{hasTokenBoolean}}" icon="social:notifications-off" on-tap="registerNotification"></paper-fab>
+        <paper-fab id="fabSetting" on$="{{hasSetting}}" icon="settings" on-tap="enableSetting"></paper-fab>
 
         <firebase-messaging
             id="messaging"
@@ -96,7 +109,6 @@
             id="document" 
             app-name="noteguu">
         </firebase-document>
-
         <firebase-query
             app-name="noteguu"
             path="{{_getPathData(noteName,'data')}}"
@@ -116,7 +128,7 @@
                 <iron-list items="[[dataNote]]" as="item">
                     <template>
                         <div>
-                            <note-item item="[[item]]"></note-item>
+                            <note-item item="[[item]]" setting="[[hasSetting]]" on-delete="_onDelete"></note-item>
                         </div>
                     </template>
                 </iron-list>
@@ -256,6 +268,18 @@
             },
             clearValue:function(e){
                 this.textarea = "";
+            },
+            enableSetting:function(){
+                if(this.hasSetting){
+                    this.hasSetting = false;
+                }else{
+                    this.hasSetting = true;
+                }
+            },
+            _onDelete:function(e){
+                this.$.document.path = `/notes/${this.noteName}/data/${e.detail}`;
+                this.$.document.destroy();
+                this.$.document.path = null;
             }
         });
     </script>

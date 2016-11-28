@@ -26,8 +26,16 @@
             .link{
                 color:#228B22;
             }
+
+            .del{
+                float: right;
+                color: #ccc;
+            }
         </style>
-        <div class="card">  
+        <div class="card">
+            <template is="dom-if" if="{{setting}}">
+                <paper-icon-button class="del" icon="delete" on-tap="del"></paper-icon-button>
+            </template>
             <div class="content" id="text"></div>
         </div>
     </template>
@@ -47,6 +55,9 @@
                 text = text.replace(exp_url,`<a class="link" target="_blank" href='$1'>$1</a>`);
 
                 this.$.text.innerHTML = text;
+            },
+            del:function(){
+                this.fire('delete',this.item.$key);
             }
         });
     </script>
