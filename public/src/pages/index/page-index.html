@@ -1,5 +1,6 @@
 <link rel="import" href="../../../bower_components/paper-input/paper-input.html">
 <link rel="import" href="../../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../../../bower_components/iron-image/iron-image.html">
 
 <dom-module id="page-index">
     <template>
@@ -29,11 +30,14 @@
         </style>
         
         <div class="container">
+            
             <div class="item">
+                <iron-image src="/images/icon-cat-128.png"></iron-image><br>
                 <paper-input label="Note name" value="{{name}}"></paper-input>
                 <paper-button raised on-tap="openNote" disabled$="[[isTextareaNull]]">open</paper-button>
             </div>
         </div>
+        
     </template>
 
 
