@@ -5,6 +5,7 @@
 <link rel="import" href="../../../bower_components/iron-icons/social-icons.html">
 <link rel="import" href="../../../bower_components/paper-icon-button/paper-icon-button.html">
 
+<link rel="import" href="../../../bower_components/app-storage/app-indexeddb-mirror/app-indexeddb-mirror.html">
 
 <link rel="import" href="../../../bower_components/iron-list/iron-list.html">
 <link rel="import" href="../../../bower_components/iron-scroll-threshold/iron-scroll-threshold.html">
@@ -117,6 +118,11 @@
             zero-value="{{xx}}"
         >
         </firebase-query>
+        <app-indexeddb-mirror
+            key="{{_getPathData(noteName,'data')}}"
+            data="{{dataNote}}"
+            persisted-data="{{persistedData}}">
+        </app-indexeddb-mirror>
         <!--<div style="position:fixed">[[lowerTriggered]]</div>-->
 
         <div class="container">
@@ -125,7 +131,7 @@
             <paper-button raised on-tap="addNote" disabled$="[[isTextareaNull]]">ADD</paper-button>
             <div class="repeat">
                 <div class="loadingContent" hidden$="[[!loadNote]]">Loading Content.</div>
-                <iron-list items="[[dataNote]]" as="item">
+                <iron-list items="[[persistedData]]" as="item">
                     <template>
                         <div>
                             <note-item item="[[item]]" setting="[[hasSetting]]" on-delete="_onDelete"></note-item>
