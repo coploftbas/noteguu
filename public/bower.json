@@ -34,6 +34,7 @@
     "iron-scroll-threshold": "PolymerElements/iron-scroll-threshold#^1.0.3",
     "iron-list": "PolymerElements/iron-list#^1.3.14",
     "iron-image": "PolymerElements/iron-image#^1.2.5",
-    "app-storage": "PolymerElements/app-storage#^0.9.8"
+    "app-storage": "PolymerElements/app-storage#^0.9.8",
+    "sw-toolbox": "^3.4.0"
   }
 }
