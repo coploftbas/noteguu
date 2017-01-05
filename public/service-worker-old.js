@@ -16,7 +16,7 @@ var urlsToCache = [
     '/bower_components/paper-input/paper-textarea.html',
     '/bower_components/paper-button/paper-button.html',
 
-    '/index.html',
+    '/',
     '/src/pages/index/page-index.html',
     '/src/pages/note/page-note.html'
 ];

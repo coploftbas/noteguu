@@ -50,9 +50,12 @@
 
                 var exp_hash = /#(\S*)/g;
                 var exp_url = /(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/ig; 
-
+                
+                text = text.replace(/</g,'&lt;');
+                text = text.replace(/>/g,'&gt;');
                 text = text.replace(exp_hash,`<span class="hashtag">#$1</span>`);
                 text = text.replace(exp_url,`<a class="link" target="_blank" href='$1'>$1</a>`);
+                
 
                 this.$.text.innerHTML = text;
             },
